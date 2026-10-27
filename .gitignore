@@ -1,0 +1,36 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Large binaries & downloaded executables
+bin/ffmpeg.exe
+bin/ffmpeg
+*.pt
+*.bin
+*.onnx
+
+# Temporary processing, uploads, and exports
+uploads/*
+!uploads/.gitkeep
+exports/*
+!exports/.gitkeep
+temp/*
+!temp/.gitkeep
+
+# IDEs & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

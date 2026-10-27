@@ -1,0 +1,30 @@
+[Script Info]
+Title: Tenglish Subtitles
+ScriptType: v4.00+
+WrapStyle: 0
+ScaledBorderAndShadow: yes
+PlayResX: 1280
+PlayResY: 720
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial,28,&H00FFFFFF,&H00F755A8,&H00000000,&H80000000,-1,0,0,0,100,100,0,0,1,2.5,1.0,2,20,20,40,1
+Style: Highlight,Arial,28,&H00F755A8,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,105,105,0,0,1,2.5,1.0,2,20,20,40,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:00.56,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}マネム{\r} イェッド パイタン ネイルチョコンダム
+Dialogue: 0,0:00:00.56,0:00:00.82,Default,,0,0,0,,マネム {\c&H00F755A8\b1\fscx108\fscy108}イェッド{\r} パイタン ネイルチョコンダム
+Dialogue: 0,0:00:00.82,0:00:01.62,Default,,0,0,0,,マネム イェッド {\c&H00F755A8\b1\fscx108\fscy108}パイタン{\r} ネイルチョコンダム
+Dialogue: 0,0:00:01.62,0:00:02.62,Default,,0,0,0,,マネム イェッド パイタン {\c&H00F755A8\b1\fscx108\fscy108}ネイルチョコンダム{\r}
+Dialogue: 0,0:00:02.62,0:00:03.24,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}ハロ{\r} フレンス
+Dialogue: 0,0:00:03.24,0:00:04.10,Default,,0,0,0,,ハロ {\c&H00F755A8\b1\fscx108\fscy108}フレンス{\r}
+Dialogue: 0,0:00:04.10,0:00:05.02,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}エロジュ{\r} マネム コッタ ロネ ウェブ サイト マリュー コーディング プラジュー
+Dialogue: 0,0:00:05.02,0:00:05.38,Default,,0,0,0,,エロジュ {\c&H00F755A8\b1\fscx108\fscy108}マネム{\r} コッタ ロネ ウェブ サイト マリュー コーディング プラジュー
+Dialogue: 0,0:00:05.38,0:00:05.86,Default,,0,0,0,,エロジュ マネム {\c&H00F755A8\b1\fscx108\fscy108}コッタ{\r} ロネ ウェブ サイト マリュー コーディング プラジュー
+Dialogue: 0,0:00:05.86,0:00:06.18,Default,,0,0,0,,エロジュ マネム コッタ {\c&H00F755A8\b1\fscx108\fscy108}ロネ{\r} ウェブ サイト マリュー コーディング プラジュー
+Dialogue: 0,0:00:06.18,0:00:06.48,Default,,0,0,0,,エロジュ マネム コッタ ロネ {\c&H00F755A8\b1\fscx108\fscy108}ウェブ{\r} サイト マリュー コーディング プラジュー
+Dialogue: 0,0:00:06.18,0:00:06.54,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ {\c&H00F755A8\b1\fscx108\fscy108}サイト{\r} マリュー コーディング プラジュー
+Dialogue: 0,0:00:06.54,0:00:07.00,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ サイト {\c&H00F755A8\b1\fscx108\fscy108}マリュー{\r} コーディング プラジュー
+Dialogue: 0,0:00:07.00,0:00:07.50,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ サイト マリュー {\c&H00F755A8\b1\fscx108\fscy108}コーディング{\r} プラジュー
+Dialogue: 0,0:00:07.50,0:00:07.94,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ サイト マリュー コーディング {\c&H00F755A8\b1\fscx108\fscy108}プラジュー{\r}

@@ -29,10 +29,23 @@ const VideoUploader = {
     const geminiGroup = document.getElementById('gemini-key-group');
     const whisperGroup = document.getElementById('whisper-model-group');
 
-    // Restore saved API key
+    // Restore saved API key or fetch server default
     const savedKey = localStorage.getItem('gemini_api_key') || '';
-    if (keyInput && savedKey) {
-      keyInput.value = savedKey;
+    if (keyInput) {
+      if (savedKey) {
+        keyInput.value = savedKey;
+      }
+      fetch('/api/config')
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.gemini_api_key) {
+            if (!keyInput.value || !localStorage.getItem('gemini_api_key')) {
+              keyInput.value = data.gemini_api_key;
+              localStorage.setItem('gemini_api_key', data.gemini_api_key);
+            }
+          }
+        })
+        .catch(() => {});
     }
 
     if (keyInput) {

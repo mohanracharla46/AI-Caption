@@ -22,6 +22,14 @@ from app.api.schemas import (
 
 router = APIRouter(prefix="/api")
 
+@router.get("/config")
+async def get_app_config():
+    """Returns app configuration including default Gemini settings."""
+    return {
+        "has_gemini_key": bool(GEMINI_API_KEY),
+        "gemini_api_key": GEMINI_API_KEY
+    }
+
 def process_transcription_pipeline(job_id: str, model_name: str, language: str, gemini_api_key: Optional[str] = None):
     """Background task to extract audio, run transcription (Gemini or Whisper), and transliterate."""
     job = job_manager.get_job(job_id)
@@ -50,8 +58,29 @@ def process_transcription_pipeline(job_id: str, model_name: str, language: str, 
                 "stage_message": "Transcribing speech using Google Gemini AI (99% Native Telugu/Tenglish Accuracy)...",
                 "progress": 60
             })
-            result = transcribe_with_gemini(audio_path, api_key=active_key)
-            tenglish_segments = result.get("segments", [])
+            try:
+                result = transcribe_with_gemini(audio_path, api_key=active_key)
+                tenglish_segments = result.get("segments", [])
+            except Exception as e:
+                print(f"Notice: Gemini transcription encountered: {e}. Falling back to local Whisper...")
+                job_manager.update_job(job_id, {
+                    "stage_message": "Gemini unavailable. Falling back to local Whisper AI...",
+                    "progress": 50
+                })
+                result = transcribe_audio(
+                    audio_path=audio_path,
+                    model_name=model_name or "base",
+                    language=language or "te",
+                    include_word_timestamps=True,
+                    generate_translation=False
+                )
+                segments = result.get("segments", [])
+                job_manager.update_job(job_id, {
+                    "status": "CONVERTING_TENGLISH",
+                    "stage_message": "Converting Telugu script to natural Tenglish...",
+                    "progress": 85
+                })
+                tenglish_segments = convert_segments(segments, mode="tenglish")
         else:
             # Stage 2: Local Whisper Speech Recognition
             job_manager.update_job(job_id, {
@@ -272,7 +301,7 @@ async def get_job_details(job_id: str):
     }
 
 
-@router.get("/job/{job_id}/video")
+@router.api_route("/job/{job_id}/video", methods=["GET", "HEAD"])
 async def get_job_video(job_id: str):
     """Serves the uploaded source video with range support for seeking."""
     job = job_manager.get_job(job_id)
@@ -416,7 +445,7 @@ async def get_burn_status(job_id: str):
     }
 
 
-@router.get("/export/{job_id}/download-burned")
+@router.api_route("/export/{job_id}/download-burned", methods=["GET", "HEAD"])
 async def download_burned_video(job_id: str):
     """Serves the rendered captioned video for download."""
     job = job_manager.get_job(job_id)

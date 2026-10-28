@@ -64,6 +64,20 @@ def generate_ass_subtitles(
     border_style = 3 if style.get("box_background", False) else 1
     is_reels = style.get("is_reels", False)
 
+    is_portrait = video_height > video_width
+    # Scale reference resolution (default baseline is 720p)
+    scale_factor = (video_height / 720.0) if is_portrait else (video_width / 1280.0)
+    scaled_font_size = max(18, int(font_size * scale_factor * (0.85 if is_portrait else 1.0)))
+    scaled_outline = round(outline_width * scale_factor, 1)
+    scaled_shadow = round(shadow_offset * scale_factor, 1)
+
+    # Margins: Keep reels text safely away from edges and mobile UI icons
+    margin_lr = int(video_width * 0.08) if is_portrait else int(video_width * 0.04)
+    scaled_margin_v = int(margin_v * scale_factor) if margin_v > 0 else 0
+    if is_portrait and position == "bottom":
+        # Keep above Instagram/TikTok bottom navigation & caption bar
+        scaled_margin_v = max(scaled_margin_v, int(video_height * 0.12))
+
     header = f"""[Script Info]
 Title: Tenglish Subtitles
 ScriptType: v4.00+
@@ -74,8 +88,8 @@ PlayResY: {video_height}
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Default,{font_name},{font_size},{primary_color},{highlight_color},{outline_color},{bg_color},-1,0,0,0,100,100,0,0,{border_style},{outline_width},{shadow_offset},{alignment},20,20,{margin_v},1
-Style: Highlight,{font_name},{font_size},{highlight_color},{primary_color},{outline_color},{bg_color},-1,0,0,0,105,105,0,0,{border_style},{outline_width},{shadow_offset},{alignment},20,20,{margin_v},1
+Style: Default,{font_name},{scaled_font_size},{primary_color},{highlight_color},{outline_color},{bg_color},-1,0,0,0,100,100,0,0,{border_style},{scaled_outline},{scaled_shadow},{alignment},{margin_lr},{margin_lr},{scaled_margin_v},1
+Style: Highlight,{font_name},{scaled_font_size},{highlight_color},{primary_color},{outline_color},{bg_color},-1,0,0,0,105,105,0,0,{border_style},{scaled_outline},{scaled_shadow},{alignment},{margin_lr},{margin_lr},{scaled_margin_v},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

@@ -2,8 +2,11 @@ import os
 import shutil
 from pathlib import Path
 
+from dotenv import load_dotenv
+
 # Paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+load_dotenv(BASE_DIR / ".env")
 BACKEND_DIR = BASE_DIR / "backend"
 FRONTEND_DIR = BASE_DIR / "frontend"
 UPLOADS_DIR = BASE_DIR / "uploads"

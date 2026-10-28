@@ -39,7 +39,7 @@ def compress_audio_for_api(input_audio_path: str, max_duration_sec: Optional[flo
 def transcribe_with_gemini(
     audio_path: str,
     api_key: str,
-    preferred_model: str = "gemini-2.5-flash"
+    preferred_model: str = "gemini-3.5-flash"
 ) -> Dict[str, Any]:
     """
     Transcribes audio using Google Gemini multimodal speech API.
@@ -100,7 +100,16 @@ CRITICAL RULES:
 6. Make sure timestamps match the actual audio voice timing.
 """
 
-    models_to_try = [preferred_model, "gemini-2.0-flash", "gemini-1.5-flash"]
+    candidate_models = [
+        preferred_model,
+        "gemini-3.5-flash",
+        "gemini-3.5-flash-lite",
+        "gemini-3.8-flash",
+        "gemini-flash-latest"
+    ]
+    # Preserve order while deduplicating
+    seen = set()
+    models_to_try = [m for m in candidate_models if not (m in seen or seen.add(m))]
     last_error = None
     response_text = ""
 
@@ -114,6 +123,7 @@ CRITICAL RULES:
             )
             response_text = response.text or ""
             if response_text.strip():
+                print(f"Successfully received transcription from '{m}'.")
                 break
         except Exception as e:
             print(f"Model {m} failed: {e}. Trying fallback...")

@@ -80,8 +80,6 @@ class JobManager:
         return job_id
 
     def get_job(self, job_id: str) -> Optional[Dict[str, Any]]:
-        if job_id in self._jobs:
-            return self._jobs[job_id]
         meta = self._job_meta_file(job_id)
         if meta.exists():
             try:
@@ -91,6 +89,8 @@ class JobManager:
                     return data
             except Exception:
                 pass
+        if job_id in self._jobs:
+            return self._jobs[job_id]
         return None
 
     def update_job(self, job_id: str, updates: Dict[str, Any]) -> Optional[Dict[str, Any]]:

@@ -10,8 +10,16 @@ if sys.platform == "win32":
     except Exception:
         pass
 
-# Add backend directory to sys.path
+# Auto-delegate to .venv if present and not already running in it
 BASE_DIR = Path(__file__).resolve().parent
+venv_python = BASE_DIR / ".venv" / ("Scripts" if sys.platform == "win32" else "bin") / ("python.exe" if sys.platform == "win32" else "python")
+if venv_python.exists() and sys.executable.lower() != str(venv_python).lower() and os.environ.get("_IN_VENV_EXEC") != "1":
+    import subprocess
+    env = os.environ.copy()
+    env["_IN_VENV_EXEC"] = "1"
+    sys.exit(subprocess.call([str(venv_python)] + sys.argv, env=env))
+
+# Add backend directory to sys.path
 sys.path.insert(0, str(BASE_DIR / "backend"))
 
 import uvicorn

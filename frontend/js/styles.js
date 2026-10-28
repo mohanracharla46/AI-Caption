@@ -208,9 +208,13 @@ const CaptionStyles = {
     // Add preset class if matching
     if (s.cssClass) overlay.classList.add(s.cssClass);
 
-    // Apply inline style overrides
+    // Scale font size proportionally if portrait reel
+    const wrapper = document.getElementById('video-wrapper');
+    const isPortrait = wrapper && wrapper.classList.contains('is-portrait-reel');
+    const effectiveFontSize = isPortrait ? Math.min(21, Math.max(15, Math.round(s.font_size * 0.72))) : s.font_size;
+
     textContent.style.fontFamily = `"${s.font_name}", sans-serif`;
-    textContent.style.fontSize = `${s.font_size}px`;
+    textContent.style.fontSize = `${effectiveFontSize}px`;
     textContent.style.color = s.primary_color;
 
     if (s.box_background) {

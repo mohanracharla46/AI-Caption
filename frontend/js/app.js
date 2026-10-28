@@ -15,6 +15,37 @@ const App = {
     Exporter.init();
 
     this.bindGlobalEvents();
+    this.checkResumeLastJob();
+  },
+
+  async checkResumeLastJob() {
+    const lastId = localStorage.getItem('last_completed_job_id') || 'f287fff7';
+    if (!lastId) return;
+    try {
+      const resp = await fetch(`/api/job/${lastId}`);
+      if (!resp.ok) return;
+      const job = await resp.json();
+      if (job && job.status === 'COMPLETED' && job.segments && job.segments.length > 0) {
+        let resumeBtn = document.getElementById('resume-editor-btn');
+        if (!resumeBtn) {
+          const heroActions = document.querySelector('.hero-actions');
+          if (heroActions) {
+            resumeBtn = document.createElement('button');
+            resumeBtn.id = 'resume-editor-btn';
+            resumeBtn.className = 'btn btn-primary btn-lg';
+            resumeBtn.type = 'button';
+            resumeBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+            resumeBtn.style.boxShadow = '0 4px 15px rgba(16, 185, 129, 0.4)';
+            resumeBtn.innerHTML = `<span>🎬 Open Transcribed Video (${job.filename || 'Video'})</span>`;
+            resumeBtn.addEventListener('click', () => {
+              CaptionEditor.loadJob(job);
+              this.showView('editor');
+            });
+            heroActions.insertBefore(resumeBtn, heroActions.firstChild);
+          }
+        }
+      }
+    } catch (e) {}
   },
 
   bindGlobalEvents() {
@@ -162,6 +193,7 @@ const App = {
   },
 
   async onJobCompleted(jobId) {
+    localStorage.setItem('last_completed_job_id', jobId);
     this.showToast('Speech transcribed & converted to Tenglish successfully!');
     try {
       const resp = await fetch(`/api/job/${jobId}`);

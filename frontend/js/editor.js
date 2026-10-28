@@ -31,6 +31,36 @@ const CaptionEditor = {
     this.video.src = `/api/job/${this.currentJobId}/video`;
     this.video.load();
 
+    // Render first frame and adjust aspect ratio immediately once metadata is ready
+    const adjustVideoLayout = () => {
+      try {
+        if (this.video.currentTime === 0) {
+          this.video.currentTime = 0.001;
+        }
+        const vw = this.video.videoWidth;
+        const vh = this.video.videoHeight;
+        const wrapper = document.getElementById('video-wrapper');
+        if (wrapper && vw && vh) {
+          if (vh > vw) {
+            // Vertical Reel (e.g. 9:16 portrait)
+            wrapper.classList.add('is-portrait-reel');
+            wrapper.style.aspectRatio = `${vw} / ${vh}`;
+          } else {
+            // Landscape / widescreen
+            wrapper.classList.remove('is-portrait-reel');
+            wrapper.style.aspectRatio = `${vw} / ${vh}`;
+          }
+          CaptionStyles.applyToOverlay();
+        }
+      } catch (e) {}
+    };
+
+    this.video.addEventListener('loadeddata', adjustVideoLayout);
+    this.video.addEventListener('loadedmetadata', adjustVideoLayout);
+    this.video.addEventListener('error', () => {
+      console.warn('Video element playback warning:', this.video.error);
+    }, { once: true });
+
     // Update file title
     const filenameEl = document.getElementById('editor-filename');
     if (filenameEl) filenameEl.textContent = jobData.filename || 'Video';

@@ -19,6 +19,45 @@ const VideoUploader = {
     this.previewStrip = document.getElementById('file-preview-strip');
 
     this.bindEvents();
+    this.initGeminiControls();
+  },
+
+  initGeminiControls() {
+    const keyInput = document.getElementById('gemini-api-key-input');
+    const toggleBtn = document.getElementById('toggle-gemini-key-btn');
+    const engineSelect = document.getElementById('select-transcription-engine');
+    const geminiGroup = document.getElementById('gemini-key-group');
+    const whisperGroup = document.getElementById('whisper-model-group');
+
+    // Restore saved API key
+    const savedKey = localStorage.getItem('gemini_api_key') || '';
+    if (keyInput && savedKey) {
+      keyInput.value = savedKey;
+    }
+
+    if (keyInput) {
+      keyInput.addEventListener('input', () => {
+        localStorage.setItem('gemini_api_key', keyInput.value.trim());
+      });
+    }
+
+    if (toggleBtn && keyInput) {
+      toggleBtn.addEventListener('click', () => {
+        keyInput.type = keyInput.type === 'password' ? 'text' : 'password';
+      });
+    }
+
+    if (engineSelect) {
+      engineSelect.addEventListener('change', () => {
+        if (engineSelect.value === 'whisper') {
+          if (geminiGroup) geminiGroup.style.display = 'none';
+          if (whisperGroup) whisperGroup.style.display = 'block';
+        } else {
+          if (geminiGroup) geminiGroup.style.display = 'block';
+          if (whisperGroup) whisperGroup.style.display = 'none';
+        }
+      });
+    }
   },
 
   bindEvents() {
@@ -165,11 +204,18 @@ const VideoUploader = {
 
     const modelSelect = document.getElementById('select-whisper-model');
     const langSelect = document.getElementById('select-audio-lang');
+    const keyInput = document.getElementById('gemini-api-key-input');
+    const engineSelect = document.getElementById('select-transcription-engine');
 
     const formData = new FormData();
     formData.append('file', this.selectedFile);
-    formData.append('whisper_model', modelSelect ? modelSelect.value : 'base');
+    formData.append('whisper_model', modelSelect ? modelSelect.value : 'small');
     formData.append('language', langSelect ? langSelect.value : 'te');
+
+    const apiKey = keyInput ? keyInput.value.trim() : (localStorage.getItem('gemini_api_key') || '');
+    if (apiKey && (!engineSelect || engineSelect.value === 'gemini')) {
+      formData.append('gemini_api_key', apiKey);
+    }
 
     try {
       const resp = await fetch('/api/upload', {

@@ -1,5 +1,6 @@
 import whisper
 import os
+import re
 import torch
 from typing import Dict, Any, List, Optional
 from app.config import DEFAULT_WHISPER_MODEL
@@ -81,6 +82,46 @@ def get_whisper_model(model_name: Optional[str] = None) -> whisper.Whisper:
         print(f"Whisper model '{name}' loaded successfully.")
     return _LOADED_MODELS[name]
 
+def is_hallucinated(text: str) -> bool:
+    """Checks if text contains non-Telugu, non-English foreign scripts (Chinese, Cyrillic, Arabic, etc.)."""
+    for ch in text:
+        c = ord(ch)
+        if (0x4E00 <= c <= 0x9FFF) or (0x0400 <= c <= 0x04FF) or (0x0600 <= c <= 0x06FF) or (0x3040 <= c <= 0x30FF) or (0xAC00 <= c <= 0xD7AF):
+            return True
+    return False
+
+def is_repetitive(text: str) -> bool:
+    """Detects decoder looping such as నినినిని or repeating syllables."""
+    if not text or len(text) < 6:
+        return False
+    # Check for repeated single character 4+ times
+    if re.search(r"(.)\1{3,}", text):
+        return True
+    # Check for 2-4 character syllable repeated 3+ times
+    for n in range(2, 5):
+        if re.search(rf"(.{{{n}}})\1{{2,}}", text):
+            return True
+    return False
+
+def is_invalid_output(segs: list) -> bool:
+    if not segs:
+        return True
+    if any(is_hallucinated(s.get("text", "")) for s in segs):
+        return True
+    if any(is_repetitive(s.get("text", "")) for s in segs):
+        return True
+    return False
+
+def sanitize_text(text: str) -> str:
+    """Removes foreign hallucinated Unicode characters (Chinese, Cyrillic, Arabic, etc.) leaving Telugu, English, punctuation."""
+    cleaned = []
+    for ch in text:
+        c = ord(ch)
+        if (0x4E00 <= c <= 0x9FFF) or (0x0400 <= c <= 0x04FF) or (0x0600 <= c <= 0x06FF) or (0x3040 <= c <= 0x30FF) or (0xAC00 <= c <= 0xD7AF):
+            continue
+        cleaned.append(ch)
+    return "".join(cleaned).strip()
+
 def transcribe_audio(
     audio_path: str,
     model_name: Optional[str] = None,
@@ -97,37 +138,77 @@ def transcribe_audio(
 
     model = get_whisper_model(model_name)
 
-    # 1. Transcribe in Telugu with domain conditioning prompt
-    initial_prompt = (
-        "మనం ఇప్పుడు పైథాన్ నేర్చుకుందాం. హలో ఫ్రెండ్స్, ఈరోజు మనం కొత్త వెబ్‌సైట్ మరియు కోడింగ్ ప్రాజెక్ట్ చేద్దాం. "
-        "Telugu speech with common English tech words: Python, coding, website, programming, project, video, YouTube, subscribe, app, developer."
-    )
     options = {
         "task": "transcribe",
         "verbose": False,
-        "initial_prompt": initial_prompt
+        "condition_on_previous_text": False,
+        "compression_ratio_threshold": 2.4,
+        "no_speech_threshold": 0.6
     }
-    if language and language != "auto":
+    if language == "translate":
+        options["task"] = "translate"
+        options["language"] = "te"
+    elif language and language != "auto":
         options["language"] = language
 
-    # Enable word-level timestamps if supported
+    # Attempt transcription with word timestamps if requested
+    raw_segments = []
+    result = {}
+
     if include_word_timestamps:
         try:
-            options["word_timestamps"] = True
-        except Exception:
-            pass
+            opts_with_words = dict(options)
+            opts_with_words["word_timestamps"] = True
+            print(f"Transcribing {audio_path} with word timestamps (language={language})...")
+            result = model.transcribe(audio_path, **opts_with_words)
+            raw_segments = result.get("segments", [])
+        except Exception as e:
+            print(f"Word timestamp pass failed or timed out: {e}")
+            raw_segments = []
 
-    print(f"Starting Whisper transcription for {audio_path}...")
-    result = model.transcribe(audio_path, **options)
-    detected_lang = result.get("language", language)
-    raw_segments = result.get("segments", [])
+    # Check if word timestamp pass collapsed or produced invalid/repetitive output
+    has_invalid = is_invalid_output(raw_segments)
+    has_collapsed = raw_segments and (len(raw_segments) <= 2 and (raw_segments[-1].get("end", 0) - raw_segments[0].get("start", 0) > 15))
+    if has_invalid or has_collapsed:
+        print("Notice: Word timestamp pass collapsed or produced invalid output. Falling back to standard pass...")
+        raw_segments = []
+
+    # Resilient Fallback 1: If word_timestamps yielded 0 segments or failed, run standard segment transcription
+    if not raw_segments:
+        print(f"Running standard segment transcription for {audio_path} (language={language})...")
+        result = model.transcribe(audio_path, **options)
+        raw_segments = result.get("segments", [])
+
+    # Resilient Fallback 2: If language was forced to 'te' and returned invalid/repetitive output, auto-detect language
+    if is_invalid_output(raw_segments) and language == "te":
+        print(f"Telugu-specific pass produced invalid/repetitive output. Retrying with auto language detection...")
+        fallback_opts = dict(options)
+        fallback_opts.pop("language", None)
+        result = model.transcribe(audio_path, **fallback_opts)
+        raw_segments = result.get("segments", [])
+
+    # Resilient Fallback 3: If still invalid or repeating, translate to English for coherent, natural captions
+    if is_invalid_output(raw_segments):
+        print("Notice: Transcribe output still invalid/repetitive. Running English translation task for accurate captions...")
+        translate_opts = dict(options)
+        translate_opts["task"] = "translate"
+        translate_opts["language"] = "te"
+        result = model.transcribe(audio_path, **translate_opts)
+        raw_segments = result.get("segments", [])
+
+    detected_lang = result.get("language", language or "te")
 
     # Format segments
     formatted_segments: List[Dict[str, Any]] = []
     for idx, seg in enumerate(raw_segments):
-        seg_text = seg.get("text", "").strip()
+        seg_text = sanitize_text(seg.get("text", "").strip())
         if not seg_text:
             continue
+
+        start_time = round(float(seg.get("start", 0)), 2)
+        end_time = round(float(seg.get("end", start_time + 1.0)), 2)
+        if end_time <= start_time:
+            end_time = start_time + 1.0
 
         words_data = []
         if "words" in seg and seg["words"]:
@@ -136,14 +217,29 @@ def transcribe_audio(
                 if w_text:
                     words_data.append({
                         "word": w_text,
-                        "start": round(w.get("start", seg.get("start", 0)), 2),
-                        "end": round(w.get("end", seg.get("end", 0)), 2)
+                        "start": round(float(w.get("start", start_time)), 2),
+                        "end": round(float(w.get("end", end_time)), 2)
+                    })
+
+        # If word timestamps were not generated by Whisper, distribute words evenly across duration
+        if not words_data:
+            tokens = seg_text.split()
+            if tokens:
+                duration = max(0.5, end_time - start_time)
+                word_dur = duration / len(tokens)
+                for w_idx, tok in enumerate(tokens):
+                    w_s = round(start_time + w_idx * word_dur, 2)
+                    w_e = round(min(end_time, w_s + word_dur), 2)
+                    words_data.append({
+                        "word": tok,
+                        "start": w_s,
+                        "end": w_e
                     })
 
         formatted_segments.append({
             "id": idx + 1,
-            "start": round(seg.get("start", 0), 2),
-            "end": round(seg.get("end", 0), 2),
+            "start": start_time,
+            "end": end_time,
             "text": seg_text,
             "telugu_text": seg_text,
             "words": words_data

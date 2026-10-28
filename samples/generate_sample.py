@@ -21,20 +21,39 @@ def generate_sample_telugu_video():
     audio_path = samples_dir / "telugu_sample.mp3"
     video_path = samples_dir / "sample_telugu_video.mp4"
     
-    print(f"Generating spoken Telugu audio with gTTS: '{text}'...")
-    tts = gTTS(text=text, lang="te")
-    tts.save(str(audio_path))
-    print(f"Audio saved: {audio_path}")
+    # Generate spoken Telugu audio with gTTS (or reuse if offline/cached)
+    if not audio_path.exists() or audio_path.stat().st_size == 0:
+        print(f"Generating spoken Telugu audio with gTTS: '{text}'...")
+        try:
+            tts = gTTS(text=text, lang="te")
+            temp_audio = samples_dir / "temp_tts.mp3"
+            tts.save(str(temp_audio))
+            temp_audio.replace(audio_path)
+            print(f"Audio saved: {audio_path}")
+        except Exception as e:
+            print(f"Notice: Could not generate new audio via gTTS ({e}).")
+            if not audio_path.exists() or audio_path.stat().st_size == 0:
+                raise RuntimeError("Audio file does not exist and cannot be fetched online.") from e
+    else:
+        print(f"Using existing Telugu sample audio ({audio_path.stat().st_size} bytes): {audio_path}")
     
     # Generate an MP4 video with a nice sleek dark purple gradient/canvas and the audio track
     print(f"Creating video with FFmpeg: {video_path}...")
+    font_filter = ""
+    font_path = Path("C:/Windows/Fonts/arial.ttf")
+    if font_path.exists():
+        escaped_font = str(font_path).replace("\\", "/").replace(":", "\\:")
+        font_filter = f"drawtext=fontfile='{escaped_font}':text='Tenglish Auto Caption Sample Video':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=200"
+    else:
+        font_filter = "drawtext=text='Tenglish Auto Caption Sample Video':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=200"
+
     cmd = [
         FFMPEG_EXE,
         "-y",
         "-f", "lavfi",
         "-i", "color=c=0x181028:s=1280x720:d=8:r=30",
         "-i", str(audio_path),
-        "-vf", "drawtext=text='Tenglish Auto Caption Sample Video':fontcolor=white:fontsize=36:x=(w-text_w)/2:y=200",
+        "-vf", font_filter,
         "-c:v", "libx264",
         "-tune", "stillimage",
         "-c:a", "aac",

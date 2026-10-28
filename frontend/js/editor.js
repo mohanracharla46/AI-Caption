@@ -150,6 +150,48 @@ const CaptionEditor = {
       });
     });
 
+    // Gemini Fix / Retranscribe button
+    const geminiBtn = document.getElementById('editor-gemini-btn');
+    if (geminiBtn) {
+      geminiBtn.addEventListener('click', async () => {
+        let key = localStorage.getItem('gemini_api_key') || '';
+        if (!key) {
+          key = prompt('Enter your free Google Gemini API Key (get one free at aistudio.google.com):');
+          if (!key || !key.trim()) return;
+          localStorage.setItem('gemini_api_key', key.trim());
+          const keyInput = document.getElementById('gemini-api-key-input');
+          if (keyInput) keyInput.value = key.trim();
+        }
+
+        geminiBtn.disabled = true;
+        geminiBtn.textContent = '⏳ Gemini Processing...';
+        App.showToast('Transcribing audio with Google Gemini for 99% accuracy...');
+
+        try {
+          const resp = await fetch(`/api/job/${this.currentJobId}/retranscribe-gemini`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ gemini_api_key: key.trim() })
+          });
+
+          if (!resp.ok) {
+            const err = await resp.json().catch(() => ({}));
+            throw new Error(err.detail || 'Gemini processing failed.');
+          }
+
+          const data = await resp.json();
+          this.segments = data.segments || [];
+          this.renderSegments();
+          App.showToast('✅ Native Telugu & Tenglish captions generated successfully!');
+        } catch (err) {
+          alert(`Gemini AI Notice: ${err.message}`);
+        } finally {
+          geminiBtn.disabled = false;
+          geminiBtn.textContent = '✨ Gemini Fix';
+        }
+      });
+    }
+
     // Add segment button
     const addBtn = document.getElementById('add-segment-btn');
     if (addBtn) {

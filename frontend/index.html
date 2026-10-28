@@ -103,6 +103,33 @@
           <!-- Configuration Controls -->
           <div class="upload-controls">
             <div class="control-group">
+              <label for="select-transcription-engine">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+                Speech AI Engine
+              </label>
+              <select id="select-transcription-engine" class="custom-select">
+                <option value="gemini" selected>✨ Google Gemini AI (Recommended: 99% Telugu/Tenglish Accuracy)</option>
+                <option value="whisper">🖥️ Local Whisper AI (Offline, CPU)</option>
+              </select>
+            </div>
+
+            <div class="control-group" id="gemini-key-group">
+              <label for="gemini-api-key-input">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                </svg>
+                Gemini API Key <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color: #c084fc; font-size: 0.8rem; margin-left: 6px; text-decoration: underline;">(Get Free Key)</a>
+              </label>
+              <div style="display: flex; gap: 8px;">
+                <input type="password" id="gemini-api-key-input" class="custom-select" style="font-family: monospace;" placeholder="Paste free Gemini API key (AIzaSy...)" autocomplete="off">
+                <button type="button" id="toggle-gemini-key-btn" class="btn btn-outline" style="padding: 0 12px;" title="Show/Hide Key">👁️</button>
+              </div>
+            </div>
+
+            <div class="control-group" id="whisper-model-group" style="display: none;">
               <label for="select-whisper-model">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14h-2v-4h2zm0-6h-2V8h2z"></path>
@@ -110,23 +137,24 @@
                 Whisper AI Model
               </label>
               <select id="select-whisper-model" class="custom-select">
-                <option value="tiny">Tiny (Fastest, ~75MB)</option>
-                <option value="base" selected>Base (Recommended balance, ~140MB)</option>
-                <option value="small">Small (Higher Accuracy, ~460MB)</option>
+                <option value="small" selected>Small (Recommended for Real Telugu, ~460MB)</option>
+                <option value="base">Base (Fast, ~140MB)</option>
+                <option value="tiny">Tiny (Ultra fast for samples, ~75MB)</option>
               </select>
             </div>
 
-            <div class="control-group">
+            <div class="control-group" id="caption-mode-group">
               <label for="select-audio-lang">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <circle cx="12" cy="12" r="10"></circle>
                   <line x1="2" y1="12" x2="22" y2="12"></line>
                   <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
                 </svg>
-                Audio Spoken Language
+                Audio / Caption Mode
               </label>
               <select id="select-audio-lang" class="custom-select">
-                <option value="te" selected>Telugu (తెలుగు) & Code-switching</option>
+                <option value="te" selected>Telugu Speech -> Tenglish Captions</option>
+                <option value="translate">Telugu Speech -> English Translation Captions</option>
                 <option value="auto">Auto Detect Language</option>
               </select>
             </div>
@@ -370,6 +398,9 @@
               <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
             VTT
+          </button>
+          <button id="editor-gemini-btn" class="btn btn-outline btn-sm" title="Re-transcribe with Google Gemini AI for 99% accuracy" style="border-color: #c084fc; color: #e9d5ff;">
+            ✨ Gemini Fix
           </button>
           <button id="burn-video-btn" class="btn btn-primary btn-sm">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

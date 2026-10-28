@@ -13,18 +13,28 @@ Style: Highlight,Arial,28,&H00F755A8,&H00FFFFFF,&H00000000,&H80000000,-1,0,0,0,1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
-Dialogue: 0,0:00:00.00,0:00:00.56,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}マネム{\r} イェッド パイタン ネイルチョコンダム
-Dialogue: 0,0:00:00.56,0:00:00.82,Default,,0,0,0,,マネム {\c&H00F755A8\b1\fscx108\fscy108}イェッド{\r} パイタン ネイルチョコンダム
-Dialogue: 0,0:00:00.82,0:00:01.62,Default,,0,0,0,,マネム イェッド {\c&H00F755A8\b1\fscx108\fscy108}パイタン{\r} ネイルチョコンダム
-Dialogue: 0,0:00:01.62,0:00:02.62,Default,,0,0,0,,マネム イェッド パイタン {\c&H00F755A8\b1\fscx108\fscy108}ネイルチョコンダム{\r}
-Dialogue: 0,0:00:02.62,0:00:03.24,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}ハロ{\r} フレンス
-Dialogue: 0,0:00:03.24,0:00:04.10,Default,,0,0,0,,ハロ {\c&H00F755A8\b1\fscx108\fscy108}フレンス{\r}
-Dialogue: 0,0:00:04.10,0:00:05.02,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}エロジュ{\r} マネム コッタ ロネ ウェブ サイト マリュー コーディング プラジュー
-Dialogue: 0,0:00:05.02,0:00:05.38,Default,,0,0,0,,エロジュ {\c&H00F755A8\b1\fscx108\fscy108}マネム{\r} コッタ ロネ ウェブ サイト マリュー コーディング プラジュー
-Dialogue: 0,0:00:05.38,0:00:05.86,Default,,0,0,0,,エロジュ マネム {\c&H00F755A8\b1\fscx108\fscy108}コッタ{\r} ロネ ウェブ サイト マリュー コーディング プラジュー
-Dialogue: 0,0:00:05.86,0:00:06.18,Default,,0,0,0,,エロジュ マネム コッタ {\c&H00F755A8\b1\fscx108\fscy108}ロネ{\r} ウェブ サイト マリュー コーディング プラジュー
-Dialogue: 0,0:00:06.18,0:00:06.48,Default,,0,0,0,,エロジュ マネム コッタ ロネ {\c&H00F755A8\b1\fscx108\fscy108}ウェブ{\r} サイト マリュー コーディング プラジュー
-Dialogue: 0,0:00:06.18,0:00:06.54,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ {\c&H00F755A8\b1\fscx108\fscy108}サイト{\r} マリュー コーディング プラジュー
-Dialogue: 0,0:00:06.54,0:00:07.00,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ サイト {\c&H00F755A8\b1\fscx108\fscy108}マリュー{\r} コーディング プラジュー
-Dialogue: 0,0:00:07.00,0:00:07.50,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ サイト マリュー {\c&H00F755A8\b1\fscx108\fscy108}コーディング{\r} プラジュー
-Dialogue: 0,0:00:07.50,0:00:07.94,Default,,0,0,0,,エロジュ マネム コッタ ロネ ウェブ サイト マリュー コーディング {\c&H00F755A8\b1\fscx108\fscy108}プラジュー{\r}
+Dialogue: 0,0:00:00.00,0:00:00.31,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}In{\r} aome do primes here for living.
+Dialogue: 0,0:00:00.31,0:00:00.62,Default,,0,0,0,,In {\c&H00F755A8\b1\fscx108\fscy108}aome{\r} do primes here for living.
+Dialogue: 0,0:00:00.63,0:00:00.94,Default,,0,0,0,,In aome {\c&H00F755A8\b1\fscx108\fscy108}do{\r} primes here for living.
+Dialogue: 0,0:00:00.94,0:00:01.25,Default,,0,0,0,,In aome do {\c&H00F755A8\b1\fscx108\fscy108}primes{\r} here for living.
+Dialogue: 0,0:00:01.26,0:00:01.57,Default,,0,0,0,,In aome do primes {\c&H00F755A8\b1\fscx108\fscy108}here{\r} for living.
+Dialogue: 0,0:00:01.57,0:00:01.88,Default,,0,0,0,,In aome do primes here {\c&H00F755A8\b1\fscx108\fscy108}for{\r} living.
+Dialogue: 0,0:00:01.89,0:00:02.20,Default,,0,0,0,,In aome do primes here for {\c&H00F755A8\b1\fscx108\fscy108}living.{\r}
+Dialogue: 0,0:00:02.90,0:00:03.42,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}Hello{\r} friends!
+Dialogue: 0,0:00:03.42,0:00:03.94,Default,,0,0,0,,Hello {\c&H00F755A8\b1\fscx108\fscy108}friends!{\r}
+Dialogue: 0,0:00:03.94,0:00:04.01,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}We{\r} are now in the initiative of year 127
+Dialogue: 0,0:00:04.01,0:00:04.08,Default,,0,0,0,,We {\c&H00F755A8\b1\fscx108\fscy108}are{\r} now in the initiative of year 127
+Dialogue: 0,0:00:04.09,0:00:04.16,Default,,0,0,0,,We are {\c&H00F755A8\b1\fscx108\fscy108}now{\r} in the initiative of year 127
+Dialogue: 0,0:00:04.16,0:00:04.23,Default,,0,0,0,,We are now {\c&H00F755A8\b1\fscx108\fscy108}in{\r} the initiative of year 127
+Dialogue: 0,0:00:04.23,0:00:04.30,Default,,0,0,0,,We are now in {\c&H00F755A8\b1\fscx108\fscy108}the{\r} initiative of year 127
+Dialogue: 0,0:00:04.31,0:00:04.38,Default,,0,0,0,,We are now in the {\c&H00F755A8\b1\fscx108\fscy108}initiative{\r} of year 127
+Dialogue: 0,0:00:04.38,0:00:04.45,Default,,0,0,0,,We are now in the initiative {\c&H00F755A8\b1\fscx108\fscy108}of{\r} year 127
+Dialogue: 0,0:00:04.45,0:00:04.52,Default,,0,0,0,,We are now in the initiative of {\c&H00F755A8\b1\fscx108\fscy108}year{\r} 127
+Dialogue: 0,0:00:04.53,0:00:04.60,Default,,0,0,0,,We are now in the initiative of year {\c&H00F755A8\b1\fscx108\fscy108}127{\r}
+Dialogue: 0,0:00:04.60,0:00:05.12,Default,,0,0,0,,{\c&H00F755A8\b1\fscx108\fscy108}chosen{\r} by Sonjaeen Lancer Padakha!
+Dialogue: 0,0:00:05.12,0:00:05.64,Default,,0,0,0,,chosen {\c&H00F755A8\b1\fscx108\fscy108}by{\r} Sonjaeen Lancer Padakha!
+Dialogue: 0,0:00:05.63,0:00:06.15,Default,,0,0,0,,chosen by {\c&H00F755A8\b1\fscx108\fscy108}Sonjaeen{\r} Lancer Padakha!
+Dialogue: 0,0:00:06.15,0:00:06.67,Default,,0,0,0,,chosen by Sonjaeen {\c&H00F755A8\b1\fscx108\fscy108}Lancer{\r} Padakha!
+Dialogue: 0,0:00:06.66,0:00:07.18,Default,,0,0,0,,chosen by Sonjaeen Lancer {\c&H00F755A8\b1\fscx108\fscy108}Padakha!{\r}
+
+

@@ -107,6 +107,17 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
 
         # If Reels mode with word timestamps, create micro-dialogue lines highlighting the active word
         if is_reels and words and len(words) > 1:
+            raw_zoom = style.get("word_zoom")
+            if raw_zoom is not None:
+                word_zoom = float(raw_zoom)
+            elif style.get("preset") == "pop_big":
+                word_zoom = 1.55
+            elif style.get("preset") == "word_zoom":
+                word_zoom = 1.45
+            else:
+                word_zoom = 1.25
+            ass_scale = max(105, min(220, int(round(word_zoom * 100))))
+            is_uppercase = style.get("uppercase", False) or style.get("preset") in ["pop_big", "word_zoom", "bold_yellow"]
             for w_idx, w in enumerate(words):
                 w_start = float(w.get("start", start_sec))
                 w_end = float(w.get("end", end_sec))
@@ -116,10 +127,11 @@ Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
                 # Build line with current word highlighted in highlight_color
                 line_words = []
                 for j, other_w in enumerate(words):
-                    w_text = other_w.get("word", "").strip()
+                    raw_text = other_w.get("word", "").strip()
+                    w_text = raw_text.upper() if is_uppercase else raw_text
                     if j == w_idx:
                         # Highlighted word with ASS color override and subtle scale
-                        line_words.append(f"{{\\c{highlight_color}\\b1\\fscx108\\fscy108}}{w_text}{{\\r}}")
+                        line_words.append(f"{{\\c{highlight_color}\\b1\\fscx{ass_scale}\\fscy{ass_scale}}}{w_text}{{\\r}}")
                     else:
                         line_words.append(w_text)
 

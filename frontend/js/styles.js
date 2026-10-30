@@ -4,6 +4,38 @@
 const CaptionStyles = {
   // Preset definitions
   presets: {
+    pop_big: {
+      preset: 'pop_big',
+      font_name: 'Montserrat',
+      font_size: 30,
+      primary_color: '#FFFFFF',
+      highlight_color: '#22C55E',
+      outline_color: '#000000',
+      outline_width: 3.2,
+      shadow_offset: 1.8,
+      position: 'bottom',
+      box_background: false,
+      is_reels: true,
+      word_zoom: 1.55,
+      uppercase: true,
+      cssClass: 'style-preset-pop-big'
+    },
+    word_zoom: {
+      preset: 'word_zoom',
+      font_name: 'Impact',
+      font_size: 28,
+      primary_color: '#FFFFFF',
+      highlight_color: '#F97316',
+      outline_color: '#000000',
+      outline_width: 3.0,
+      shadow_offset: 1.5,
+      position: 'bottom',
+      box_background: false,
+      is_reels: true,
+      word_zoom: 1.45,
+      uppercase: true,
+      cssClass: 'style-preset-zoom'
+    },
     reels_highlight: {
       preset: 'reels_highlight',
       font_name: 'Montserrat',
@@ -16,6 +48,8 @@ const CaptionStyles = {
       position: 'bottom',
       box_background: false,
       is_reels: true,
+      word_zoom: 1.25,
+      uppercase: false,
       cssClass: 'style-preset-reels'
     },
     bold_yellow: {
@@ -79,7 +113,7 @@ const CaptionStyles = {
   currentStyle: null,
 
   init() {
-    this.currentStyle = { ...this.presets.reels_highlight };
+    this.currentStyle = { ...this.presets.pop_big };
     this.bindEvents();
     this.updateControlsUI();
     this.applyToOverlay();
@@ -152,6 +186,20 @@ const CaptionStyles = {
       this.currentStyle.box_background = e.target.checked;
       this.applyToOverlay();
     });
+
+    const zoomSelect = document.getElementById('style-word-zoom');
+    if (zoomSelect) zoomSelect.addEventListener('change', (e) => {
+      this.currentStyle.word_zoom = parseFloat(e.target.value);
+      const valEl = document.getElementById('word-zoom-val');
+      if (valEl) valEl.textContent = e.target.value;
+      this.applyToOverlay();
+    });
+
+    const upperToggle = document.getElementById('style-uppercase-toggle');
+    if (upperToggle) upperToggle.addEventListener('change', (e) => {
+      this.currentStyle.uppercase = e.target.checked;
+      this.applyToOverlay();
+    });
   },
 
   applyPreset(presetKey) {
@@ -188,6 +236,14 @@ const CaptionStyles = {
     if (positionSelect) positionSelect.value = s.position;
     if (reelsToggle) reelsToggle.checked = s.is_reels;
     if (boxBgToggle) boxBgToggle.checked = s.box_background;
+
+    const zoomSelect = document.getElementById('style-word-zoom');
+    if (zoomSelect) zoomSelect.value = s.word_zoom ? s.word_zoom.toString() : '1.35';
+    const zoomVal = document.getElementById('word-zoom-val');
+    if (zoomVal) zoomVal.textContent = s.word_zoom ? s.word_zoom.toString() : '1.35';
+
+    const upperToggle = document.getElementById('style-uppercase-toggle');
+    if (upperToggle) upperToggle.checked = !!s.uppercase;
   },
 
   applyToOverlay() {
@@ -225,8 +281,16 @@ const CaptionStyles = {
       textContent.style.backdropFilter = 'none';
     }
 
-    // Set CSS variable for active highlight color
+    // Set CSS variable for active highlight color & zoom scale
+    const activeZoom = s.word_zoom || 1.45;
+    document.documentElement.style.setProperty('--word-zoom-scale', activeZoom);
     document.documentElement.style.setProperty('--style-highlight-color', s.highlight_color);
+
+    if (s.uppercase) {
+      textContent.style.textTransform = 'uppercase';
+    } else {
+      textContent.style.textTransform = 'none';
+    }
   },
 
   getStylePayload() {

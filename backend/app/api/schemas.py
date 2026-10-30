@@ -38,6 +38,8 @@ class CaptionStyleModel(BaseModel):
     box_background: Optional[bool] = False
     is_reels: Optional[bool] = False
     preset: Optional[str] = "reels_highlight"
+    word_zoom: Optional[float] = 1.25
+    uppercase: Optional[bool] = False
 
 class BurnVideoRequest(BaseModel):
     style: Optional[CaptionStyleModel] = None

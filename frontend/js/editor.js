@@ -185,7 +185,7 @@ const CaptionEditor = {
     if (geminiBtn) {
       geminiBtn.addEventListener('click', async () => {
         let key = localStorage.getItem('gemini_api_key') || '';
-        if (!key) {
+        if (!key && !window.SERVER_HAS_GEMINI_KEY) {
           key = prompt('Enter your free Google Gemini API Key (get one free at aistudio.google.com):');
           if (!key || !key.trim()) return;
           localStorage.setItem('gemini_api_key', key.trim());
@@ -198,10 +198,11 @@ const CaptionEditor = {
         App.showToast('Transcribing audio with Google Gemini for 99% accuracy...');
 
         try {
+          const payload = key && key.trim() ? { gemini_api_key: key.trim() } : {};
           const resp = await fetch(`/api/job/${this.currentJobId}/retranscribe-gemini`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ gemini_api_key: key.trim() })
+            body: JSON.stringify(payload)
           });
 
           if (!resp.ok) {
@@ -281,20 +282,26 @@ const CaptionEditor = {
       const isReels = CaptionStyles.currentStyle && CaptionStyles.currentStyle.is_reels;
 
       if (isReels && seg.words && seg.words.length > 0) {
+        const isUpper = CaptionStyles.currentStyle && CaptionStyles.currentStyle.uppercase;
         // Word-level karaoke animation
         const wordsHtml = seg.words.map(w => {
           const wStart = parseFloat(w.start);
           const wEnd = parseFloat(w.end);
           const isActive = (currentTime >= wStart && currentTime <= wEnd);
           const activeClass = isActive ? 'active-word' : '';
-          const wordText = w.word || '';
+          let wordText = w.word || '';
+          if (isUpper) wordText = wordText.toUpperCase();
           return `<span class="word-token ${activeClass}">${wordText}</span>`;
         }).join(' ');
 
         this.captionContent.innerHTML = wordsHtml;
       } else {
         // Standard sentence text
-        this.captionContent.textContent = seg.text || '';
+        let text = seg.text || '';
+        if (CaptionStyles.currentStyle && CaptionStyles.currentStyle.uppercase) {
+          text = text.toUpperCase();
+        }
+        this.captionContent.textContent = text;
       }
 
       this.captionOverlay.style.opacity = '1';

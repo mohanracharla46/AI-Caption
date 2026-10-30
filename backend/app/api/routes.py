@@ -2,7 +2,7 @@ import os
 import shutil
 from pathlib import Path
 from typing import Optional, Dict, Any
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks, Response
+from fastapi import APIRouter, UploadFile, File, Form, HTTPException, BackgroundTasks, Response, Body
 from fastapi.responses import FileResponse, StreamingResponse
 from app.config import (
     UPLOADS_DIR, EXPORTS_DIR, ALLOWED_EXTENSIONS, MAX_UPLOAD_SIZE_BYTES,
@@ -26,8 +26,7 @@ router = APIRouter(prefix="/api")
 async def get_app_config():
     """Returns app configuration including default Gemini settings."""
     return {
-        "has_gemini_key": bool(GEMINI_API_KEY),
-        "gemini_api_key": GEMINI_API_KEY
+        "has_gemini_key": bool(GEMINI_API_KEY and GEMINI_API_KEY.strip())
     }
 
 def process_transcription_pipeline(job_id: str, model_name: str, language: str, gemini_api_key: Optional[str] = None):
@@ -223,12 +222,13 @@ async def upload_video(
 
 
 @router.post("/job/{job_id}/retranscribe-gemini")
-async def retranscribe_existing_job(job_id: str, payload: Dict[str, Any]):
+async def retranscribe_existing_job(job_id: str, payload: Optional[Dict[str, Any]] = Body(default={})):
     """Re-transcribes an existing uploaded job using Google Gemini AI."""
     job = job_manager.get_job(job_id)
     if not job:
         raise HTTPException(status_code=404, detail="Job not found.")
 
+    payload = payload or {}
     api_key = payload.get("gemini_api_key") or GEMINI_API_KEY
     if not api_key:
         raise HTTPException(status_code=400, detail="Gemini API Key is required.")

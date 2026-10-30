@@ -65,7 +65,9 @@ class JobManager:
                 "position": "bottom",
                 "box_background": False,
                 "is_reels": False,
-                "preset": "reels_highlight"
+                "preset": "reels_highlight",
+                "word_zoom": 1.25,
+                "uppercase": False
             },
             "burned_video_path": None,
             "burn_progress": 0,

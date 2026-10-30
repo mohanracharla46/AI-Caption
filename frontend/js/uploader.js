@@ -28,29 +28,55 @@ const VideoUploader = {
     const engineSelect = document.getElementById('select-transcription-engine');
     const geminiGroup = document.getElementById('gemini-key-group');
     const whisperGroup = document.getElementById('whisper-model-group');
+    const serverPill = document.getElementById('gemini-server-active-pill');
+    const inputContainer = document.getElementById('gemini-key-input-container');
+    const toggleCustomBtn = document.getElementById('toggle-custom-gemini-btn');
 
-    // Restore saved API key or fetch server default
+    // Fetch config to check if server has key configured (without exposing the secret key)
+    fetch('/api/config')
+      .then(res => res.json())
+      .then(data => {
+        window.SERVER_HAS_GEMINI_KEY = !!(data && data.has_gemini_key);
+        // Clear any old key accidentally saved in browser's localStorage
+        const storedKey = localStorage.getItem('gemini_api_key');
+        if (storedKey && storedKey.startsWith('AQ.')) {
+          localStorage.removeItem('gemini_api_key');
+          if (keyInput) keyInput.value = '';
+        }
+
+        if (window.SERVER_HAS_GEMINI_KEY) {
+          if (serverPill) serverPill.style.display = 'flex';
+          if (inputContainer) inputContainer.style.display = 'none';
+        } else {
+          if (serverPill) serverPill.style.display = 'none';
+          if (inputContainer) inputContainer.style.display = 'block';
+        }
+      })
+      .catch(() => {});
+
+    if (toggleCustomBtn && inputContainer) {
+      toggleCustomBtn.addEventListener('click', () => {
+        const isHidden = inputContainer.style.display === 'none';
+        inputContainer.style.display = isHidden ? 'block' : 'none';
+        toggleCustomBtn.textContent = isHidden ? 'Hide Custom Key' : 'Custom Key';
+      });
+    }
+
+    // Restore user-entered custom API key if present and not the server key
     const savedKey = localStorage.getItem('gemini_api_key') || '';
-    if (keyInput) {
-      if (savedKey) {
-        keyInput.value = savedKey;
-      }
-      fetch('/api/config')
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.gemini_api_key) {
-            if (!keyInput.value || !localStorage.getItem('gemini_api_key')) {
-              keyInput.value = data.gemini_api_key;
-              localStorage.setItem('gemini_api_key', data.gemini_api_key);
-            }
-          }
-        })
-        .catch(() => {});
+    if (keyInput && savedKey && !savedKey.startsWith('AQ.')) {
+      keyInput.value = savedKey;
+      if (inputContainer) inputContainer.style.display = 'block';
     }
 
     if (keyInput) {
       keyInput.addEventListener('input', () => {
-        localStorage.setItem('gemini_api_key', keyInput.value.trim());
+        const val = keyInput.value.trim();
+        if (val) {
+          localStorage.setItem('gemini_api_key', val);
+        } else {
+          localStorage.removeItem('gemini_api_key');
+        }
       });
     }
 

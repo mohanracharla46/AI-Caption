@@ -116,16 +116,28 @@
             </div>
 
             <div class="control-group" id="gemini-key-group">
-              <label for="gemini-api-key-input">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
-                Gemini API Key <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color: #c084fc; font-size: 0.8rem; margin-left: 6px; text-decoration: underline;">(Get Free Key)</a>
-              </label>
-              <div style="display: flex; gap: 8px;">
-                <input type="password" id="gemini-api-key-input" class="custom-select" style="font-family: monospace;" placeholder="Paste free Gemini API key (AIzaSy...)" autocomplete="off">
-                <button type="button" id="toggle-gemini-key-btn" class="btn btn-outline" style="padding: 0 12px;" title="Show/Hide Key">👁️</button>
+              <!-- Active status indicator shown when server Gemini key is loaded -->
+              <div id="gemini-server-active-pill" style="display: none; background: rgba(168, 85, 247, 0.12); border: 1px solid rgba(168, 85, 247, 0.35); border-radius: 8px; padding: 10px 14px; font-size: 0.86rem; color: #e9d5ff; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #10b981; box-shadow: 0 0 8px #10b981;"></span>
+                  <span><strong>Gemini Cloud Speech AI Active</strong> (Server ready)</span>
+                </div>
+                <button type="button" id="toggle-custom-gemini-btn" style="background: none; border: none; color: #c084fc; font-size: 0.78rem; text-decoration: underline; cursor: pointer; padding: 0;">Custom Key</button>
+              </div>
+
+              <!-- Manual key input container: hidden by default when server key is active -->
+              <div id="gemini-key-input-container">
+                <label for="gemini-api-key-input">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                  </svg>
+                  Custom Gemini API Key <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" style="color: #c084fc; font-size: 0.8rem; margin-left: 6px; text-decoration: underline;">(Get Free Key)</a>
+                </label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="password" id="gemini-api-key-input" class="custom-select" style="font-family: monospace;" placeholder="Enter custom API key or leave blank" autocomplete="off">
+                  <button type="button" id="toggle-gemini-key-btn" class="btn btn-outline" style="padding: 0 12px;" title="Show/Hide Key">👁️</button>
+                </div>
               </div>
             </div>
 
@@ -484,7 +496,13 @@
 
             <!-- Style Presets Quick Row -->
             <div class="style-presets-row">
-              <button class="preset-pill active" data-preset="reels_highlight">
+              <button class="preset-pill active" data-preset="pop_big" title="Alex Hormozi / Viral Pop - Active word displays BIG">
+                <span class="preset-dot green"></span> 💥 Pop Big (Viral)
+              </button>
+              <button class="preset-pill" data-preset="word_zoom" title="Dynamic scale zoom with flame highlight">
+                <span class="preset-dot orange"></span> 🔥 Word Zoom
+              </button>
+              <button class="preset-pill" data-preset="reels_highlight">
                 <span class="preset-dot purple"></span> Reels Highlight
               </button>
               <button class="preset-pill" data-preset="bold_yellow">
@@ -539,10 +557,24 @@
                   </select>
                 </div>
 
+                <div class="style-field">
+                  <label>Word Zoom (<span id="word-zoom-val">1.55</span>x)</label>
+                  <select id="style-word-zoom" class="custom-select-sm">
+                    <option value="1.15">Standard (1.15x)</option>
+                    <option value="1.35">Large (1.35x)</option>
+                    <option value="1.55" selected>Extra Big Pop (1.55x)</option>
+                    <option value="1.75">Giant Zoom (1.75x)</option>
+                  </select>
+                </div>
+
                 <div class="style-field style-checkbox-field">
                   <label>
                     <input type="checkbox" id="style-reels-toggle" checked>
                     <span>Dynamic Word Karaoke</span>
+                  </label>
+                  <label>
+                    <input type="checkbox" id="style-uppercase-toggle" checked>
+                    <span>Uppercase Words (ALL CAPS)</span>
                   </label>
                   <label>
                     <input type="checkbox" id="style-box-bg-toggle">

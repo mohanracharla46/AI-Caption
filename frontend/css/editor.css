@@ -176,6 +176,81 @@
   font-size: 0.9rem;
 }
 
+/* Preset 0: 💥 Pop Big (Viral Reels / Hormozi Style) */
+.style-preset-pop-big .caption-text-content {
+  font-family: 'Montserrat', 'Impact', sans-serif;
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  text-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.95),
+    -3px -3px 0 #000,  
+     3px -3px 0 #000,
+    -3px  3px 0 #000,
+     3px  3px 0 #000;
+}
+
+.style-preset-pop-big .word-token {
+  display: inline-block;
+  margin: 0 0.24rem;
+  transition: transform 0.14s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.12s ease;
+  opacity: 0.88;
+}
+
+.style-preset-pop-big .word-token.active-word {
+  opacity: 1;
+  color: var(--style-highlight-color, #22c55e);
+  transform: scale(var(--word-zoom-scale, 1.55)) translateY(-4px);
+  display: inline-block;
+  font-weight: 900;
+  z-index: 10;
+  position: relative;
+  text-shadow: 
+    0 0 20px rgba(34, 197, 94, 0.95),
+    -3.5px -3.5px 0 #000,  
+     3.5px -3.5px 0 #000,
+    -3.5px  3.5px 0 #000,
+     3.5px  3.5px 0 #000;
+}
+
+/* Preset: 🔥 Word Zoom (Flame Orange) */
+.style-preset-zoom .caption-text-content {
+  font-family: 'Impact', 'Montserrat', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  text-shadow: 
+    0 3px 8px rgba(0, 0, 0, 0.9),
+    -2.8px -2.8px 0 #000,  
+     2.8px -2.8px 0 #000,
+    -2.8px  2.8px 0 #000,
+     2.8px  2.8px 0 #000;
+}
+
+.style-preset-zoom .word-token {
+  display: inline-block;
+  margin: 0 0.22rem;
+  transition: transform 0.14s cubic-bezier(0.175, 0.885, 0.32, 1.275), color 0.12s ease;
+}
+
+.style-preset-zoom .word-token.active-word {
+  color: var(--style-highlight-color, #f97316);
+  transform: scale(var(--word-zoom-scale, 1.45)) translateY(-3px);
+  display: inline-block;
+  z-index: 10;
+  position: relative;
+  text-shadow: 
+    0 0 18px rgba(249, 115, 22, 0.9),
+    -3px -3px 0 #000,  
+     3px -3px 0 #000,
+    -3px  3px 0 #000,
+     3px  3px 0 #000;
+}
+
 /* Preset 1: Reels Highlight */
 .style-preset-reels .caption-text-content {
   font-family: 'Montserrat', 'Outfit', sans-serif;
@@ -393,6 +468,8 @@
   height: 9px;
   border-radius: 50%;
 }
+.preset-dot.green  { background-color: #22c55e; box-shadow: 0 0 8px #22c55e; }
+.preset-dot.orange { background-color: #f97316; box-shadow: 0 0 8px #f97316; }
 .preset-dot.purple { background-color: #a855f7; box-shadow: 0 0 6px #a855f7; }
 .preset-dot.yellow { background-color: #facc15; box-shadow: 0 0 6px #facc15; }
 .preset-dot.white  { background-color: #ffffff; }
